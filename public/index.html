@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acad AI ProjectHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' ry='8' fill='%231e88e5'/%3E%3Ctext x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='34' fill='white'%3EA%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Acad AI ProjectHub</h3>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" id="nav-dashboard" class="active"><span class="material-icons">dashboard</span>Dashboard</a></li>
+                    <!-- Project Shortcuts (Student) -->
+                    <li id="nav-project-shortcuts" style="display:none;">
+                        <a href="#" id="nav-add-task"><span class="material-icons">add</span>Add New Task</a>
+                        <a href="#" id="nav-project-chat"><span class="material-icons">forum</span>Project Chat</a>
+                        <a href="#" id="nav-upload-files"><span class="material-icons">cloud_upload</span>Upload Files</a>
+                        <a href="#" id="nav-see-suggestions"><span class="material-icons">tips_and_updates</span>Faculty Suggestions</a>
+                        <a href="#" id="nav-smart-reminders"><span class="material-icons">alarm</span>Smart Reminders</a>
+                    </li>
+                    <li id="nav-auth-links">
+                        <a href="#" id="nav-login"><span class="material-icons">login</span>Login</a>
+                        <a href="#" id="nav-register"><span class="material-icons">person_add</span>Register</a>
+                    </li>
+                    <li style="display: none;" id="nav-user-links">
+                        <a href="#" id="nav-profile"><span class="material-icons">account_circle</span>Profile</a>
+                        <a href="#" id="nav-logout"><span class="material-icons">logout</span>Logout</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <span id="welcome-message">Welcome to Acad AI ProjectHub!</span>
+                <div class="user-info" style="display: none;">
+                    <span id="logged-in-username"></span>
+                    <span class="material-icons">person</span>
+                </div>
+            </header>
+
+            <section id="auth-view" class="content-view active">
+                <h2>Access Your Account</h2>
+                <div class="auth-forms-container">
+                    <form id="login-form" class="auth-form-card">
+                        <h3>Login</h3>
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn primary-btn">Login</button>
+                        <p id="login-error" class="error-message"></p>
+                        <p>Don't have an account? <a href="#" id="switch-to-register">Register here</a></p>
+                    </form>
+
+                    <form id="register-form" class="auth-form-card" style="display:none;">
+                        <h3>Register</h3>
+                        <div class="form-group">
+                            <label for="register-username">Username</label>
+                            <input type="text" id="register-username" placeholder="Choose a username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">Password</label>
+                            <input type="password" id="register-password" placeholder="Choose a password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-role">Role</label>
+                            <select id="register-role">
+                                <option value="student">Student</option>
+                                <option value="faculty">Faculty</option>
+                                <option value="team_leader">Team Leader</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn primary-btn">Register</button>
+                        <p id="register-error" class="error-message"></p>
+                        <p>Already have an account? <a href="#" id="switch-to-login">Login here</a></p>
+                    </form>
+                </div>
+            </section>
+
+            <section id="dashboard-view" class="content-view" style="display:none;">
+                <h2>Dashboard Overview</h2>
+                <div class="dashboard-widgets">
+                    <!-- Student Dashboard -->
+                    <div id="student-dashboard">
+                        <!-- Student Project Management -->
+                        <div class="widget student-projects-widget">
+                            <h3>My Projects</h3>
+                            <div class="student-actions">
+                                <button id="create-project-btn" class="btn primary-btn"><span class="material-icons">add</span>Create New Project</button>
+                                <button id="join-project-btn" class="btn secondary-btn"><span class="material-icons">group_add</span>Join Existing Project</button>
+                            </div>
+                            <div id="student-projects-list">
+                                <ul id="projects-ul" class="item-list">
+                                    <!-- Projects will be loaded here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Faculty Dashboard -->
+                    <div id="faculty-dashboard" style="display:none;">
+                        <!-- Faculty Metrics Overview -->
+                        <div class="widget faculty-metrics-widget">
+                            <h3>Faculty Overview</h3>
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <div class="metric-value" id="faculty-total-projects">0</div>
+                                    <div class="metric-label">Total Assigned</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value" id="faculty-active-projects">0</div>
+                                    <div class="metric-label">Active Projects</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value" id="faculty-completed-projects">0</div>
+                                    <div class="metric-label">Completed</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-value" id="faculty-pending-projects">0</div>
+                                    <div class="metric-label">Pending</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Faculty Project Management -->
+                        <div class="widget faculty-projects-widget">
+                            <h3>Assigned Projects</h3>
+                            <div class="faculty-actions">
+                                <button id="faculty-add-project-btn" class="btn primary-btn"><span class="material-icons">playlist_add</span>Add Student Project</button>
+                            </div>
+                            <div id="faculty-assigned-projects">
+                                <ul id="faculty-projects-ul" class="item-list">
+                                    <!-- Faculty assigned projects will be loaded here -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Faculty Evaluation Widget -->
+                        <div class="widget" id="faculty-eval-widget">
+                            <h3>Project Evaluation</h3>
+                            <div class="form-group">
+                                <label for="faculty-eval-project-id">Project ID</label>
+                                <input type="text" id="faculty-eval-project-id" placeholder="Enter student project ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="faculty-eval-text">Evaluation / Feedback</label>
+                                <textarea id="faculty-eval-text" rows="3" placeholder="Write evaluation notes for the team..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="faculty-eval-grade">Project Grade</label>
+                                <select id="faculty-eval-grade">
+                                    <option value="N/A">N/A</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                    <option value="F">F</option>
+                                </select>
+                            </div>
+                            <button id="faculty-eval-submit-btn" class="btn primary-btn"><span class="material-icons">assessment</span>Submit Evaluation</button>
+                            <p id="faculty-eval-status" class="error-message"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Join Project Modal -->
+                <div id="join-project-modal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <h3>Join Existing Project</h3>
+                        <div class="form-group">
+                            <label for="join-project-id">Project ID</label>
+                            <input type="text" id="join-project-id" placeholder="Enter project ID" required>
+                        </div>
+                        <button id="submit-join-project-btn" class="btn primary-btn">Join Project</button>
+                        <p id="join-project-error" class="error-message"></p>
+                    </div>
+                </div>
+                <!-- Faculty Add Project Modal -->
+                <div id="faculty-add-project-modal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <h3>Add Student Project by ID</h3>
+                        <div class="form-group">
+                            <label for="faculty-project-id">Project ID</label>
+                            <input type="text" id="faculty-project-id" placeholder="Enter student project ID" required>
+                        </div>
+                        <button id="submit-faculty-add-project-btn" class="btn primary-btn">Open Project</button>
+                        <p id="faculty-add-project-error" class="error-message"></p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="project-details-view" class="content-view" style="display:none;">
+                <button id="back-to-dashboard" class="btn flat-btn"><span class="material-icons">arrow_back</span> Back to Dashboard</button>
+                <div class="content-header project-header">
+                    <h2>Project Name: <span id="project-details-name">Project Title</span></h2>
+                    <div class="project-header-actions">
+                        <button id="complete-project-btn" class="btn success-btn" style="display:none;"><span class="material-icons">done_all</span>Complete Project</button>
+                    </div>
+                    <p id="project-details-id-display" class="project-id-display"><span class="material-icons">vpn_key</span> Project ID: <span id="current-project-id"></span></p>
+                </div>
+                <p id="project-details-description-display" class="project-description"></p>
+                <div class="project-meta-info meta-grid">
+                    <div class="meta-item"><span class="material-icons">flag</span><span> Status: <span id="project-details-status" class="badge"></span></span></div>
+                    <div class="meta-item"><span class="material-icons">verified_user</span><span> Team Leader: <span id="project-details-owner"></span></span></div>
+                    <div class="meta-item"><span class="material-icons">event</span><span> Created At: <span id="project-created-at" class="badge muted"></span></span></div>
+                    <div class="meta-item"><span class="material-icons">update</span><span> Last Updated: <span id="project-updated-at" class="badge muted"></span></span></div>
+                    <div class="meta-item"><span class="material-icons">auto_awesome</span><span> AI Plan Status: <span id="project-ai-plan-status" class="badge info"></span></span></div>
+                    <div class="meta-item"><span class="material-icons">feedback</span><span> Faculty Evaluation: <span id="project-faculty-evaluation"></span></span></div>
+                    <div class="meta-item"><span class="material-icons">grade</span><span> Project Grade: <span id="project-grade" class="badge info"></span></span></div>
+                </div>
+                <div class="content-panel" id="project-health-panel" style="display:none;">
+                    <h3>Project Health</h3>
+                    <div class="charts-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:12px;">
+                        <div><canvas id="chart-completion"></canvas></div>
+                        <div><canvas id="chart-completed"></canvas></div>
+                        <div><canvas id="chart-inprogress"></canvas></div>
+                        <div><canvas id="chart-pending"></canvas></div>
+                        <div><canvas id="chart-blocked"></canvas></div>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <button id="ai-plan-project-btn" class="btn primary-btn"><span class="material-icons">auto_awesome</span>AI Plan Tasks</button>
+                    <button id="auto-milestones-btn" class="btn secondary-btn"><span class="material-icons">flag</span>Auto Milestones</button>
+                    <button id="view-productivity-btn" class="btn secondary-btn"><span class="material-icons">insights</span>Productivity Insights</button>
+                    <button id="generate-report-btn" class="btn secondary-btn"><span class="material-icons">picture_as_pdf</span>Generate Report</button>
+                    <button id="view-feedback-btn" class="btn secondary-btn" style="display:none;"><span class="material-icons">feedback</span>View Feedback</button>
+                    <button id="evaluate-project-btn" class="btn secondary-btn" style="display:none;"><span class="material-icons">assessment</span>Evaluate Project</button>
+                </div>
+
+                <div class="content-panel team-members-panel">
+                    <h3>Team Members</h3>
+                    <ul id="team-members-ul" class="item-list">
+                        <!-- Team members will be loaded here -->
+                    </ul>
+                </div>
+
+                <div class="content-panel tasks-panel" id="tasks-panel">
+                    <h3>Tasks</h3>
+                    <div id="task-management-section">
+                        <div class="task-filters" style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+                            <button id="tasks-filter-all" class="btn secondary-btn">All</button>
+                            <button id="tasks-filter-pending" class="btn secondary-btn">Pending</button>
+                            <button id="tasks-filter-completed" class="btn secondary-btn">Completed</button>
+                            <span id="tasks-counts" style="color:#666; margin-left:8px;"></span>
+                        </div>
+                        <ul id="tasks-ul" class="item-list">
+                            <!-- Tasks will be loaded here -->
+                        </ul>
+                        <button id="create-task-btn" class="btn primary-btn"><span class="material-icons">add</span>Add New Task</button>
+                    </div>
+                </div>
+
+                <div class="content-panel chat-panel" id="chat-panel">
+                    <h3>Project Chat</h3>
+                    <div class="chat-messages-container" id="chat-messages-container"></div>
+                    <form id="chat-input-form" class="chat-input-form">
+                        <input type="text" id="chat-message-input" placeholder="Type your message..." required>
+                        <button type="submit" id="send-message-btn" class="btn primary-btn"><span class="material-icons">send</span>Send</button>
+                    </form>
+                </div>
+
+                <div class="section-card" id="files-panel">
+                    <h3>File Sharing & Version Control</h3>
+                    <div class="form-group file-upload-group">
+                        <input type="file" id="file-upload-input" class="file-input">
+                        <label for="file-upload-input" class="btn secondary-btn file-input-label">
+                            <span class="material-icons">upload_file</span> Choose File
+                        </label>
+                        <span id="file-name-display" class="file-name-display">No file chosen</span>
+                    </div>
+                    <button id="upload-file-btn" class="btn primary-btn"><span class="material-icons">cloud_upload</span> Upload File</button>
+                    <div class="files-list-container" id="files-list-container">
+                        <h4>Uploaded Files</h4>
+                        <ul id="files-ul" class="item-list">
+                            <!-- Files will be loaded here -->
+                            <li>No files uploaded for this project.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="content-panel">
+                    <h3>Faculty Suggestions</h3>
+                    <div id="faculty-suggestions-section">
+                        <ul id="faculty-suggestions-ul" class="item-list">
+                            <!-- Suggestions will be loaded here -->
+                        </ul>
+                        <div id="faculty-suggestion-compose" style="display:none;" class="form-group">
+                            <label for="faculty-suggestion-text">Add Suggestion</label>
+                            <textarea id="faculty-suggestion-text" rows="3" placeholder="Provide guidance or feedback..."></textarea>
+                            <button id="submit-faculty-suggestion-btn" class="btn primary-btn"><span class="material-icons">send</span>Submit Suggestion</button>
+                            <p id="faculty-suggestion-error" class="error-message"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Planned Tasks Section (Modal or separate panel) -->
+            <div id="ai-planned-tasks-section" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>AI Suggested Plan for <span id="ai-plan-project-name"></span></h3>
+                    <h5>Suggested Tasks</h5>
+                    <ul id="ai-suggested-tasks-ul" class="item-list"></ul>
+                    <h5>Suggested Milestones</h5>
+                    <ul id="ai-suggested-milestones-ul" class="item-list"></ul>
+                    <h5>Itinerary (Week-by-Week)</h5>
+                    <ul id="ai-itinerary-ul" class="item-list"></ul>
+                    <div class="modal-actions">
+                        <button id="accept-ai-plan-btn" class="btn primary-btn" style="display:none;">Accept AI Plan</button>
+                        <button id="approve-plan-btn" class="btn success-btn" style="display:none;">Approve Plan</button>
+                        <button id="reject-plan-btn" class="btn danger-btn" style="display:none;">Reject Plan</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productivity Insights Section (Modal or separate panel) -->
+            <div id="productivity-insights-section" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Productivity Insights for <span id="insights-project-name"></span></h3>
+                    <p>Completed Tasks: <span id="completed-tasks-count"></span></p>
+                    <p>In Progress Tasks: <span id="in-progress-tasks-count"></span></p>
+                    <p>Total Tasks: <span id="total-tasks-count"></span></p>
+                    <p>Completion Rate: <span id="completion-rate"></span>%</p>
+                    <h5>AI Suggestions:</h5>
+                    <ul id="ai-productivity-suggestions-ul" class="item-list"></ul>
+                    <h5>Insights</h5>
+                    <ul class="item-list">
+                        <li id="insight-performing-well"></li>
+                        <li id="insight-needs-improvement"></li>
+                        <li id="insight-team-suggestion"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Smart Reminders Section (Modal) -->
+            <div id="smart-reminders-section" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Smart Reminders for <span id="reminders-project-name"></span></h3>
+                    <h5>Top Priorities</h5>
+                    <ul id="reminders-top-ul" class="item-list"></ul>
+                    <h5>Grouped Recommendations</h5>
+                    <div id="reminders-groups-container"></div>
+                </div>
+            </div>
+
+            <!-- Auto Milestones Section (Modal) -->
+            <div id="auto-milestones-section" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Auto Milestone Planning for <span id="auto-ms-project-name"></span></h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="auto-ms-duration-days">Duration (days)</label>
+                            <input type="number" id="auto-ms-duration-days" placeholder="e.g., 45">
+                        </div>
+                        <div class="form-group">
+                            <label for="auto-ms-deadline">Deadline (optional)</label>
+                            <input type="date" id="auto-ms-deadline">
+                        </div>
+                    </div>
+                    <p style="margin: 8px 0; color: #666;">We'll use current tasks and their complexities if available.</p>
+                    <div class="modal-actions">
+                        <button id="generate-auto-ms-btn" class="btn primary-btn">Generate Milestones</button>
+                    </div>
+                    <h5>Suggested Milestones</h5>
+                    <ul id="auto-ms-list" class="item-list"></ul>
+                </div>
+            </div>
+
+            <!-- Faculty Feedback Section (Modal or separate panel) -->
+            <div id="faculty-feedback-section" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Faculty Feedback for <span id="feedback-project-name"></span></h3>
+                    <p id="faculty-feedback-summary"></p>
+                    <h5>AI Feedback Suggestions:</h5>
+                    <ul id="ai-feedback-suggestions-ul" class="item-list"></ul>
+                    <div class="performance-metrics">
+                        <p>Tasks Completed: <span id="feedback-tasks-completed"></span></p>
+                        <p>Tasks In Progress: <span id="feedback-tasks-in-progress"></span></p>
+                        <p>Overdue Tasks: <span id="feedback-overdue-tasks"></span></p>
+                        <p>Avg. Completion Time: <span id="feedback-avg-completion-time"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Evaluation Section (Modal or separate panel) -->
+            <div id="faculty-evaluation-section" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Faculty Project Evaluation for <span id="evaluation-project-name"></span></h3>
+                    <div class="form-group">
+                        <label for="faculty-evaluation-text">Evaluation Comments</label>
+                        <textarea id="faculty-evaluation-text" placeholder="Enter your evaluation comments..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-grade-select">Project Grade</label>
+                        <select id="project-grade-select">
+                            <option value="N/A">Select Grade</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="F">F</option>
+                        </select>
+                    </div>
+                    <button id="submit-evaluation-btn" class="btn primary-btn">Submit Evaluation</button>
+                    <p id="evaluation-status" class="status-message"></p>
+                </div>
+            </div>
+
+            <!-- Modals for Create Project and Create Task -->
+            <div id="create-project-modal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Create New Project</h3>
+                    <div class="form-group">
+                        <label for="project-name">Project Name</label>
+                        <input type="text" id="project-name" placeholder="Enter project name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-description">Description</label>
+                        <textarea id="project-description" placeholder="Describe your project"></textarea>
+                    </div>
+                    <button id="save-project-btn" class="btn primary-btn">Save Project</button>
+                    <p id="project-error" class="error-message"></p>
+                </div>
+            </div>
+
+            <div id="create-task-modal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Add New Task to <span id="task-project-name"></span></h3>
+                    <div class="form-group">
+                        <label for="task-name">Task Name</label>
+                        <input type="text" id="task-name" placeholder="Enter task name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">Description</label>
+                        <textarea id="task-description" placeholder="Describe the task"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-due-date">Due Date</label>
+                        <input type="date" id="task-due-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-priority">Priority</label>
+                        <select id="task-priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="task-assignee-group" style="display:none;">
+                        <label for="task-assignee">Assign To</label>
+                        <select id="task-assignee"></select>
+                    </div>
+                    <button id="save-task-btn" class="btn primary-btn">Save Task</button>
+                    <p id="task-error" class="error-message"></p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
